@@ -88,9 +88,11 @@ class TestExperimentalCustomToolkits:
     def test_upsert_passes_params_through(self, custom_toolkits, mock_client):
         mock_client.custom.upsert.return_value = "upserted"
 
-        result = custom_toolkits.upsert(
-            slug="MY_TOOLKIT", toolkit_config=TOOLKIT_CONFIG
-        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", exceptions.ComposioDeprecationWarning)
+            result = custom_toolkits.upsert(
+                slug="MY_TOOLKIT", toolkit_config=TOOLKIT_CONFIG
+            )
 
         assert result == "upserted"
         mock_client.custom.upsert.assert_called_once_with(
